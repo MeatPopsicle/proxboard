@@ -2,11 +2,13 @@
 
 A simple dashboard that auto-populates your VMs and LXC containers from your Proxmox instance into a simple user interface. Uses the Proxmox API to pull your machine data.
 
+- Pin favourites to a top bar
+
 - View the running status of each machine.
 
 - Easily access the web container, or SSH of each node at the click of a button.
 
-- Just edit your Proxmox notes as follows:
+    - Just edit your Proxmox note as follows:
 
     - IP: x.x.x.x Port: xxxx (SSH-Port: xxxx - optional)
 
@@ -18,6 +20,9 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 - You can then access the dashboard by navigating to `http://your-server-ip/dashboard.php`.
 
+## Troubleshooting
+
+Ensure www-data (or relevant web user) has write access to the pinned.json file
 
 ## Notes
 

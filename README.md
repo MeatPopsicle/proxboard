@@ -24,6 +24,10 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 Ensure www-data (or relevant web user) has write access to the pinned.json file
 
+E.G:
+- sudo chmod 664 /var/www/html/proxdash/pinned.json
+- sudo chown www-data:www-data /var/www/html/proxdash/pinned.json
+
 ## Notes
 
 Just a simple bookmark page for now to keep track of and access your machines.

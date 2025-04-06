@@ -16,10 +16,16 @@
         h2 { color: #ffffff; border-bottom: 1px solid #4da8da; padding-bottom: 5px; }
         .type-label { font-size: 12px; color: #aaaaaa; }
         .error { color: #ff4444; }
-        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 5px; }
+        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
         .status-running { background-color: #00ff00; }
         .status-stopped { background-color: #ff0000; }
         .button-group { margin-top: 10px; }
+        .action-link { color: #4da8da; text-decoration: none; transition: color 0.2s; }
+        .action-link:hover { color: #ffffff; text-decoration: underline; }
+        .header { display: flex; justify-content: center; align-items: center; position: relative; }
+        .header h3 { margin: 0; }
+        .status-left { position: absolute; left: 0; }
+        .pin-right { position: absolute; right: 0; }
     </style>
 </head>
 <body>
@@ -191,17 +197,21 @@
                 <?php else: ?>
                     <?php foreach ($pinned_resources as $res): ?>
                         <div class="vm-card" data-vmid="<?php echo $res['vmid']; ?>">
-                            <h3><?php echo htmlspecialchars($res['name']); ?>
-                                <span class="status-indicator <?php echo $res['status'] === 'running' ? 'status-running' : 'status-stopped'; ?>"></span>
-                            </h3>
+                            <div class="header">
+                                <span class="status-left">
+                                    <span class="status-indicator <?php echo $res['status'] === 'running' ? 'status-running' : 'status-stopped'; ?>"></span>
+                                </span>
+                                <h3><?php echo htmlspecialchars($res['name']); ?></h3>
+                                <span class="pin-right">
+                                    <button class="pin-btn">★</button>
+                                </span>
+                            </div>
                             <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                             <div class="type-label"><?php echo $res['type']; ?></div>
                             <div class="button-group">
-                                <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank">Web</a>
-                                <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank">SSH</a>
+                                <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-link">Web</a>
+                                <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-link">SSH</a>
                             </div>
-                            <br>
-                            <button class="pin-btn">★</button>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -216,17 +226,21 @@
                 <?php else: ?>
                     <?php foreach ($unpinned_resources as $res): ?>
                         <div class="vm-card" data-vmid="<?php echo $res['vmid']; ?>">
-                            <h3><?php echo htmlspecialchars($res['name']); ?>
-                                <span class="status-indicator <?php echo $res['status'] === 'running' ? 'status-running' : 'status-stopped'; ?>"></span>
-                            </h3>
+                            <div class="header">
+                                <span class="status-left">
+                                    <span class="status-indicator <?php echo $res['status'] === 'running' ? 'status-running' : 'status-stopped'; ?>"></span>
+                                </span>
+                                <h3><?php echo htmlspecialchars($res['name']); ?></h3>
+                                <span class="pin-right">
+                                    <button class="pin-btn">☆</button>
+                                </span>
+                            </div>
                             <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                             <div class="type-label"><?php echo $res['type']; ?></div>
                             <div class="button-group">
-                                <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank">Web</a>
-                                <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank">SSH</a>
+                                <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-link">Web</a>
+                                <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-link">SSH</a>
                             </div>
-                            <br>
-                            <button class="pin-btn">☆</button>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>

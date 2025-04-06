@@ -10,7 +10,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
     - Just edit your Proxmox note as follows:
 
-    - IP: x.x.x.x Port: xxxx (SSH-Port: xxxx - optional)
+    - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
 
 # Installation
 

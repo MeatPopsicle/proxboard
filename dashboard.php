@@ -191,7 +191,7 @@
 
         <div class="pinned-section">
             <h2>Pinned Servers</h2>
-            <div class="vm-grid">
+            <div class="vm-grid" id="pinned-grid">
                 <?php if (empty($pinned_resources)): ?>
                     <p>No pinned resources found.</p>
                 <?php else: ?>
@@ -220,7 +220,7 @@
 
         <div>
             <h2>All Servers</h2>
-            <div class="vm-grid">
+            <div class="vm-grid" id="unpinned-grid">
                 <?php if (empty($unpinned_resources)): ?>
                     <p>No unpinned resources found.</p>
                 <?php else: ?>
@@ -255,9 +255,14 @@
                 const card = btn.closest('.vm-card');
                 const vmid = card.dataset.vmid;
                 const isPinned = btn.textContent === '★';
+                const pinnedGrid = document.getElementById('pinned-grid');
+                const unpinnedGrid = document.getElementById('unpinned-grid');
+
+                // Update button state
                 btn.textContent = isPinned ? '☆' : '★';
                 btn.style.color = isPinned ? '#ffffff' : '#ffd700';
 
+                // Send update to server
                 fetch(window.location.href, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -267,11 +272,32 @@
                     return response.json();
                 }).then(data => {
                     if (data.success) {
-                        window.location.reload();
+                        // Move card to the appropriate section
+                        if (isPinned) {
+                            unpinnedGrid.appendChild(card);
+                            if (!unpinnedGrid.querySelector('.vm-card')) {
+                                unpinnedGrid.innerHTML = '<p>No unpinned resources found.</p>';
+                            }
+                            if (pinnedGrid.querySelectorAll('.vm-card').length === 0) {
+                                pinnedGrid.innerHTML = '<p>No pinned resources found.</p>';
+                            }
+                        } else {
+                            pinnedGrid.appendChild(card);
+                            if (!pinnedGrid.querySelector('.vm-card')) {
+                                pinnedGrid.innerHTML = '<p>No pinned resources found.</p>';
+                            }
+                            if (unpinnedGrid.querySelectorAll('.vm-card').length === 0) {
+                                unpinnedGrid.innerHTML = '<p>No unpinned resources found.</p>';
+                            }
+                        }
                     } else {
                         console.error('Pin update failed:', data.error);
+                        window.location.reload(); // Fallback to reload on failure
                     }
-                }).catch(err => console.error('Pin update failed:', err));
+                }).catch(err => {
+                    console.error('Pin update failed:', err);
+                    window.location.reload(); // Fallback to reload on error
+                });
             });
         });
     </script>

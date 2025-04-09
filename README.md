@@ -14,7 +14,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 # Installation
 
-- Place this into a directory in your web server node (e.g: /var/www/html/proxdash/) and make sure it is accessible via HTTP.
+- Place this into a directory in your web server node (e.g: /var/www/html/proxboard/) and make sure it is accessible via HTTP.
 
 - Edit config.php with your Proxmox IP, credentials and node name.
 

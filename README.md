@@ -8,7 +8,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 - Easily access the web container, or SSH of each node at the click of a button.
 
-    - Just edit your Proxmox note as follows:
+    - Just edit your Proxmox LXC/VM note as follows:
 
     - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
 

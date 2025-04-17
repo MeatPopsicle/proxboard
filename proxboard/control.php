@@ -18,7 +18,7 @@ $vmid = (int)$_POST['vmid'];
 $type = strtolower($_POST['type']);
 $action = $_POST['action'];
 
-if (!in_array($type, ['qemu', 'lxc']) || !in_array($action, ['start', 'stop'])) {
+if (!in_array($type, ['qemu', 'lxc']) || !in_array($action, ['start', 'stop', 'restart'])) {
     echo json_encode(['success' => false, 'error' => 'Invalid type or action']);
     ob_end_flush();
     exit;
@@ -32,9 +32,11 @@ if (isset($auth['error'])) {
     exit;
 }
 
-$result = $action === 'start' 
-    ? startVM($config['proxmox_host'], $config['node'], $type, $vmid, $auth['ticket'], $auth['csrf'])
-    : stopVM($config['proxmox_host'], $config['node'], $type, $vmid, $auth['ticket'], $auth['csrf']);
+$result = match ($action) {
+    'start' => startVM($config['proxmox_host'], $config['node'], $type, $vmid, $auth['ticket'], $auth['csrf']),
+    'stop' => stopVM($config['proxmox_host'], $config['node'], $type, $vmid, $auth['ticket'], $auth['csrf']),
+    'restart' => restartVM($config['proxmox_host'], $config['node'], $type, $vmid, $auth['ticket'], $auth['csrf'])
+};
 
 if (isset($result['error'])) {
     echo json_encode(['success' => false, 'error' => $result['error']]);

@@ -90,6 +90,11 @@ foreach ($lxc_containers as $container) {
     ];
 }
 
+// Sort resources by vmid
+usort($all_resources, function($a, $b) {
+    return $a['vmid'] <=> $b['vmid'];
+});
+
 $result['pinned_resources'] = array_filter($all_resources, function($res) { return $res['pinned']; });
 $result['unpinned_resources'] = array_filter($all_resources, function($res) { return !$res['pinned']; });
 

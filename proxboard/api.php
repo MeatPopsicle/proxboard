@@ -166,4 +166,39 @@ function stopVM($host, $node, $type, $vmid, $ticket, $csrf) {
     }
     return ['success' => true, 'data' => $data['data']];
 }
+
+function restartVM($host, $node, $type, $vmid, $ticket, $csrf) {
+    $ch = curl_init();
+    $endpoint = $type === 'qemu' 
+        ? "https://$host/api2/json/nodes/$node/qemu/$vmid/status/reboot"
+        : "https://$host/api2/json/nodes/$node/lxc/$vmid/status/reboot";
+    $headers = [
+        "Cookie: PVEAuthCookie=$ticket",
+        "CSRFPreventionToken: $csrf"
+    ];
+    curl_setopt($ch, CURLOPT_URL, $endpoint);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, '');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " restartVM error: $error\n", FILE_APPEND);
+        return ['error' => "cURL Error (restartVM): $error"];
+    }
+    curl_close($ch);
+    $data = json_decode($response, true) ?? [];
+    if ($http_code !== 200 || !isset($data['data'])) {
+        $error = 'Restart failed: ' . ($data['message'] ?? "HTTP $http_code, no data returned");
+        file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " restartVM error: $error\n", FILE_APPEND);
+        return ['error' => $error];
+    }
+    return ['success' => true, 'data' => $data['data']];
+}
 ?>

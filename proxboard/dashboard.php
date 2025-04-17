@@ -39,7 +39,11 @@
                                 <div class="vm-card-sidebar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
-                                    <button class="action-btn start-btn" title="Start">▶</button>
+                                    <?php if ($res['status'] === 'running'): ?>
+                                        <button class="action-btn restart-btn" title="Restart">🔄</button>
+                                    <?php else: ?>
+                                        <button class="action-btn start-btn" title="Start">▶</button>
+                                    <?php endif; ?>
                                     <button class="action-btn stop-btn" title="Stop">■</button>
                                 </div>
                             </div>
@@ -72,7 +76,11 @@
                                 <div class="vm-card-sidebar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
-                                    <button class="action-btn start-btn" title="Start">▶</button>
+                                    <?php if ($res['status'] === 'running'): ?>
+                                        <button class="action-btn restart-btn" title="Restart">🔄</button>
+                                    <?php else: ?>
+                                        <button class="action-btn start-btn" title="Start">▶</button>
+                                    <?php endif; ?>
                                     <button class="action-btn stop-btn" title="Stop">■</button>
                                 </div>
                             </div>
@@ -81,6 +89,15 @@
                 </div>
             </div>
         <?php } ?>
+    </div>
+
+    <!-- Modal for Stop/Restart Confirmation -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <p>Are you sure you want to <span id="modalAction"></span> this container?</p>
+            <button class="modal-confirm" id="modalConfirm">Confirm</button>
+            <button class="modal-cancel" id="modalCancel">Cancel</button>
+        </div>
     </div>
 
     <script src="/proxboard/scripts.js"></script>

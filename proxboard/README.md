@@ -2,9 +2,11 @@
 
 A simple dashboard that auto-populates your VMs and LXC containers from your Proxmox instance into a clean user interface. Uses the Proxmox API to pull your machine data.
 
+- Each node has it's own card and is sorted by VMID
+
 - Pin favourites to a top bar
 
-- View the running status of each machine.
+- View the running status of each node.
 
 - Action bar to easily manage / access the node:
 

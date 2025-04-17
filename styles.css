@@ -88,6 +88,7 @@ body {
 .stop-btn {
     background-color: #cc0000;
     font-size: 25px; /* Larger for square icon */
+    padding-bottom: 7px;
 }
 
 .stop-btn:hover {

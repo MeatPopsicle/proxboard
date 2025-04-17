@@ -34,6 +34,8 @@ E.G:
 - sudo chmod 664 /var/www/html/proxboard/pinned.json debug.log
 - sudo chown www-data:www-data /var/www/html/proxboard/pinned.json debug.log
 
+Check debug.log if any critical errors occur
+
 ## Notes
 
 Just a simple bookmark page for now to keep track of, manage and access your machines.

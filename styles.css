@@ -25,7 +25,6 @@ body {
     background-color: #3a3a3a;
     padding: 15px;
     border-radius: 5px;
-    display: flex;
     transition: transform 0.2s;
 }
 
@@ -41,12 +40,12 @@ body {
 
 .vm-card-sidebar {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     gap: 8px;
-    margin-left: 10px;
-    padding-left: 10px;
-    border-left: 1px solid #555555;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #555555;
 }
 
 .action-btn {

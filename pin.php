@@ -7,8 +7,6 @@ header('Content-Type: application/json');
 
 require_once '/etc/proxmox-dashboard/config.php';
 
-file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " POST received: " . print_r($_POST, true) . "\n", FILE_APPEND);
-
 if (!isset($_POST['vmid']) || !isset($_POST['pin'])) {
     echo json_encode(['success' => false, 'error' => 'Missing vmid or pin']);
     ob_end_flush();

@@ -28,11 +28,11 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 ## Troubleshooting
 
-Ensure www-data (or relevant web user) has write access to the pinned.json file
+Ensure www-data (or relevant web user) has write access to the pinned.json and debug.log files
 
 E.G:
-- sudo chmod 664 /var/www/html/proxdash/pinned.json
-- sudo chown www-data:www-data /var/www/html/proxdash/pinned.json
+- sudo chmod 664 /var/www/html/proxboard/pinned.json debug.log
+- sudo chown www-data:www-data /var/www/html/proxboard/pinned.json debug.log
 
 ## Notes
 

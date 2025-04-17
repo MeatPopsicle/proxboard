@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/api.php';
-$config = require_once __DIR__ . '/config.php';
+$config = require_once '/etc/proxmox-dashboard/config.php';
 
 // Validate config
 $required_keys = ['proxmox_host', 'username', 'password', 'node'];

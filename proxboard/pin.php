@@ -1,11 +1,12 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-ob_start(); // Start output buffering
+ob_start();
 
 header('Content-Type: application/json');
 
-// Debug log
+require_once '/etc/proxmox-dashboard/config.php';
+
 file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " POST received: " . print_r($_POST, true) . "\n", FILE_APPEND);
 
 if (!isset($_POST['vmid']) || !isset($_POST['pin'])) {

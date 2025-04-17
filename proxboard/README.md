@@ -1,0 +1,37 @@
+# Proxmox Dashboard
+
+A simple dashboard that auto-populates your VMs and LXC containers from your Proxmox instance into a clean user interface. Uses the Proxmox API to pull your machine data.
+
+- Pin favourites to a top bar
+
+- View the running status of each machine.
+
+- Action bar to easily manage / access the node:
+
+    - Start / Stop / Restart (confirmation if running)
+
+    - Connect to web address, or SSH
+
+        - Edit your Proxmox LXC/VM note as follows:
+
+        - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
+
+# Installation
+
+- Place this into a directory in your web server node (e.g: /var/www/html/) and make sure it is accessible via HTTP.
+
+- Move config.php safely out of public reach into /etc/proxmox-dashboard/config.php and edit it with your Proxmox IP, credentials and node name.
+
+- You can then access the dashboard by navigating to `http://your-server-ip/proxboard/dashboard.php`.
+
+## Troubleshooting
+
+Ensure www-data (or relevant web user) has write access to the pinned.json file
+
+E.G:
+- sudo chmod 664 /var/www/html/proxdash/pinned.json
+- sudo chown www-data:www-data /var/www/html/proxdash/pinned.json
+
+## Notes
+
+Just a simple bookmark page for now to keep track of, manage and access your machines.

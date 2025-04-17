@@ -1,33 +1,39 @@
 # Proxmox Dashboard
 
-A simple dashboard that auto-populates your VMs and LXC containers from your Proxmox instance into a simple user interface. Uses the Proxmox API to pull your machine data.
+A simple dashboard that auto-populates your VMs and LXC containers from your Proxmox instance into a clean user interface. Uses the Proxmox API to pull your machine data.
+
+- Each node has it's own card and is sorted by VMID
 
 - Pin favourites to a top bar
 
-- View the running status of each machine.
+- View the running status of each node.
 
-- Easily access the web container, or SSH of each node at the click of a button.
+- Action bar to easily manage / access the node:
 
-    - Just edit your Proxmox LXC/VM note as follows:
+    - Start / Stop / Restart (confirmation if running)
 
-    - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
+    - Connect to web address, or SSH
+
+        - Edit your Proxmox LXC/VM note as follows:
+
+        - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
 
 # Installation
 
-- Place this into a directory in your web server node (e.g: /var/www/html/proxboard/) and make sure it is accessible via HTTP.
+- Place this into a directory in your web server node (e.g: /var/www/html/) and make sure it is accessible via HTTP.
 
-- Edit config.php with your Proxmox IP, credentials and node name.
+- Move config.php safely out of public reach into /etc/proxmox-dashboard/config.php and edit it with your Proxmox IP, credentials and node name.
 
-- You can then access the dashboard by navigating to `http://your-server-ip/dashboard.php`.
+- You can then access the dashboard by navigating to `http://your-server-ip/proxboard/dashboard.php`.
 
 ## Troubleshooting
 
-Ensure www-data (or relevant web user) has write access to the pinned.json file
+Ensure www-data (or relevant web user) has write access to the pinned.json and debug.log files
 
 E.G:
-- sudo chmod 664 /var/www/html/proxdash/pinned.json
-- sudo chown www-data:www-data /var/www/html/proxdash/pinned.json
+- sudo chmod 664 /var/www/html/proxboard/pinned.json debug.log
+- sudo chown www-data:www-data /var/www/html/proxboard/pinned.json debug.log
 
 ## Notes
 
-Just a simple bookmark page for now to keep track of and access your machines.
+Just a simple bookmark page for now to keep track of, manage and access your machines.

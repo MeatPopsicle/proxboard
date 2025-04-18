@@ -24,11 +24,24 @@ if (!file_exists($pinned_file)) {
 }
 
 // Fetch resources
-$result = ['error' => null, 'pinned_resources' => [], 'unpinned_resources' => []];
+$result = ['error' => null, 'pinned_resources' => [], 'unpinned_resources' => [], 'node_status' => []];
 $auth = getTicket($config['proxmox_host'], $config['username'], $config['password']);
 if (isset($auth['error'])) {
     $result['error'] = $auth['error'];
     return $result;
+}
+
+// Fetch node status
+$node_status = getNodeStatus($config['proxmox_host'], $config['node'], $auth['ticket']);
+if (!isset($node_status['error'])) {
+    $result['node_status'] = [
+        'node_name' => $node_status['nodename'] ?? $config['node'],
+        'cpu_usage' => round($node_status['cpu'] * 100, 2), // Convert to percentage
+        'memory_used' => round($node_status['memory']['used'] / (1024 * 1024 * 1024), 2), // Convert to GB
+        'memory_total' => round($node_status['memory']['total'] / (1024 * 1024 * 1024), 2), // Convert to GB
+        'disk_used' => round($node_status['rootfs']['used'] / (1024 * 1024 * 1024), 2), // Convert to GB
+        'disk_total' => round($node_status['rootfs']['total'] / (1024 * 1024 * 1024), 2) // Convert to GB
+    ];
 }
 
 $qemu_vms = getQemuVMs($config['proxmox_host'], $config['node'], $auth['ticket']);
@@ -62,7 +75,12 @@ foreach ($qemu_vms as $vm) {
         'web_url' => "http://$ip:$web_port",
         'ssh_url' => "ssh://$ip:$ssh_port",
         'pinned' => isset($pinned[$vm['vmid']]),
-        'status' => $status
+        'status' => $status['status'],
+        'cpu_usage' => $status['cpu_usage'],
+        'memory_used' => $status['memory_used'],
+        'memory_total' => $status['memory_total'],
+        'disk_used' => $status['disk_used'],
+        'disk_total' => $status['disk_total']
     ];
 }
 
@@ -86,7 +104,12 @@ foreach ($lxc_containers as $container) {
         'web_url' => "http://$ip:$web_port",
         'ssh_url' => "ssh://$ip:$ssh_port",
         'pinned' => isset($pinned[$container['vmid']]),
-        'status' => $status
+        'status' => $status['status'],
+        'cpu_usage' => $status['cpu_usage'],
+        'memory_used' => $status['memory_used'],
+        'memory_total' => $status['memory_total'],
+        'disk_used' => $status['disk_used'],
+        'disk_total' => $status['disk_total']
     ];
 }
 

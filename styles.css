@@ -11,19 +11,78 @@ body {
     margin: 0 auto;
 }
 
+.node-status-bar {
+    background-color: #3a3a3a;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.node-status-bar h2 {
+    margin: 0;
+    border-bottom: none;
+}
+
+.node-metrics {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+}
+
+.node-metrics span {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.metric-label::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.node-metrics span:nth-child(1) .metric-label::before {
+    background-color: #4da8da;
+}
+
+.node-metrics span:nth-child(2) .metric-label::before {
+    background-color: #ffcc00;
+}
+
+.node-metrics span:nth-child(3) .metric-label::before {
+    background-color: #00cc00;
+}
+
+.node-progress-bar {
+    background-color: #555555;
+    width: 100px;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
 .pinned-section {
     margin-bottom: 30px;
 }
 
 .vm-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px;
 }
 
 .vm-card {
     background-color: #3a3a3a;
-    padding: 15px;
+    padding: 12px;
     border-radius: 5px;
     transition: transform 0.2s;
 }
@@ -38,37 +97,43 @@ body {
     text-align: center;
 }
 
+.vm-card-content p {
+    margin: 10px;
+    font-size: 12px;
+    color: #cccccc;
+}
+
 .vm-card-sidebar {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid #555555;
 }
 
 .action-btn {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     background-color: #4da8da;
     color: #ffffff;
     border: none;
-    border-radius: 5px;
-    font-size: 18px;
+    border-radius: 4px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     text-decoration: none;
 }
 
 .action-btn:hover {
     transform: scale(1.1);
     background-color: #5bb9eb;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
     opacity: 0.9;
     text-decoration: none;
 }
@@ -87,7 +152,7 @@ body {
 
 .shutdown-btn {
     background-color: #ff9900;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .shutdown-btn:hover {
@@ -96,8 +161,8 @@ body {
 
 .stop-btn {
     background-color: #cc0000;
-    font-size: 25px; /* Larger for square icon */
-    padding-bottom: 7px;
+    font-size: 22px;
+    padding-bottom: 6px;
 }
 
 .stop-btn:hover {
@@ -110,7 +175,7 @@ body {
 
 .restart-btn:hover {
     background-color: #ffd700;
-    animation: pulse 0.5s infinite alternate; /* Pulsing effect */
+    animation: pulse 0.5s infinite alternate;
 }
 
 @keyframes pulse {
@@ -120,7 +185,7 @@ body {
 
 .pin-btn {
     color: #ffd700;
-    font-size: 16px;
+    font-size: 14px;
     background: none;
     border: none;
     cursor: pointer;
@@ -135,11 +200,12 @@ body {
 h2 {
     color: #ffffff;
     border-bottom: 1px solid #4da8da;
-    padding-bottom: 5px;
+    padding-bottom: 4px;
+    font-size: 18px;
 }
 
 .type-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #aaaaaa;
 }
 
@@ -149,10 +215,10 @@ h2 {
 
 .status-indicator {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 .status-running {
@@ -168,11 +234,12 @@ h2 {
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .header h3 {
     margin: 0;
+    font-size: 16px;
 }
 
 .status-left {
@@ -185,7 +252,6 @@ h2 {
     right: 0;
 }
 
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -239,7 +305,6 @@ h2 {
     background-color: #5bb9eb;
 }
 
-/* Animations */
 .fade-in {
     animation: fadeIn 0.3s ease-in;
 }
@@ -256,4 +321,53 @@ h2 {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+p {
+    margin: 10px;
+    font-size: 14px;
+}
+
+.vm-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    background-color: #555555;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.metric-icon {
+    font-size: 10px;
+    margin-right: 4px;
+    width: 12px;
+    text-align: center;
+}
+
+.progress {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.cpu-progress {
+    background-color: #4da8da;
+}
+
+.ram-progress {
+    background-color: #ffcc00;
+}
+
+.ram-progress .metric-icon {
+    color: #00cc00;
+}
+
+.disk-progress {
+    background-color: #00cc00;
 }

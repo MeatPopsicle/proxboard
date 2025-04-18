@@ -60,7 +60,7 @@
                                         </span>
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
-                                    <div class="type-label"><?php echo $res['type']; ?></div>
+                                    <div class="type-label"><?php echo $res['type'] . ' (' . $res['vmid'] . ')'; ?></div>
                                     <?php if ($res['status'] === 'running'): ?>
                                         <div class="vm-metrics">
                                             <div class="progress-bar">
@@ -114,7 +114,7 @@
                                         </span>
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
-                                    <div class="type-label"><?php echo $res['type']; ?></div>
+                                    <div class="type-label"><?php echo $res['type'] . ' (' . $res['vmid'] . ')'; ?></div>
                                     <?php if ($res['status'] === 'running'): ?>
                                         <div class="vm-metrics">
                                             <div class="progress-bar">

@@ -85,9 +85,19 @@ body {
     background-color: #00e600;
 }
 
+.shutdown-btn {
+    background-color: #ff9900;
+    font-size: 18px;
+}
+
+.shutdown-btn:hover {
+    background-color: #ffaa33;
+}
+
 .stop-btn {
     background-color: #cc0000;
     font-size: 25px; /* Larger for square icon */
+    padding-bottom: 7px;
 }
 
 .stop-btn:hover {

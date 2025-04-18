@@ -15,6 +15,32 @@
             echo "<p class='error'>" . htmlspecialchars($data['error']) . "</p>";
         } else {
         ?>
+            <div class="node-status-bar">
+                <h2>Node: <?php echo htmlspecialchars($data['node_status']['node_name'] ?? 'Unknown'); ?></h2>
+                <div class="node-metrics">
+                    <span>
+                        <span class="metric-label">CPU</span>
+                        <span id="cpu-usage"><?php echo htmlspecialchars($data['node_status']['cpu_usage'] ?? 'N/A'); ?>%</span>
+                        <div class="node-progress-bar">
+                            <div class="progress cpu-progress" style="width: <?php echo ($data['node_status']['cpu_usage'] ?? 0); ?>%;"></div>
+                        </div>
+                    </span>
+                    <span>
+                        <span class="metric-label">RAM</span>
+                        <span id="ram-usage"><?php echo htmlspecialchars($data['node_status']['memory_used'] ?? 'N/A'); ?> / <?php echo htmlspecialchars($data['node_status']['memory_total'] ?? 'N/A'); ?> GB</span>
+                        <div class="node-progress-bar">
+                            <div class="progress ram-progress" style="width: <?php echo ($data['node_status']['memory_total'] > 0 ? ($data['node_status']['memory_used'] / $data['node_status']['memory_total'] * 100) : 0); ?>%;"></div>
+                        </div>
+                    </span>
+                    <span>
+                        <span class="metric-label">Disk</span>
+                        <span id="disk-usage"><?php echo htmlspecialchars($data['node_status']['disk_used'] ?? 'N/A'); ?> / <?php echo htmlspecialchars($data['node_status']['disk_total'] ?? 'N/A'); ?> GB</span>
+                        <div class="node-progress-bar">
+                            <div class="progress disk-progress" style="width: <?php echo ($data['node_status']['disk_total'] > 0 ? ($data['node_status']['disk_used'] / $data['node_status']['disk_total'] * 100) : 0); ?>%;"></div>
+                        </div>
+                    </span>
+                </div>
+            </div>
             <div class="pinned-section">
                 <h2>Pinned Servers</h2>
                 <div class="vm-grid" id="pinned-grid">
@@ -35,6 +61,22 @@
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                                     <div class="type-label"><?php echo $res['type']; ?></div>
+                                    <?php if ($res['status'] === 'running'): ?>
+                                        <div class="vm-metrics">
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">🖥️</span>
+                                                <div class="progress cpu-progress" style="width: <?php echo $res['cpu_usage']; ?>%;"></div>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">🧪</span>
+                                                <div class="progress ram-progress" style="width: <?php echo ($res['memory_total'] > 0 ? ($res['memory_used'] / $res['memory_total'] * 100) : 0); ?>%;"></div>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">💾</span>
+                                                <div class="progress disk-progress" style="width: <?php echo ($res['disk_total'] > 0 ? ($res['disk_used'] / $res['disk_total'] * 100) : 0); ?>%;"></div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="vm-card-sidebar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>
@@ -73,6 +115,22 @@
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                                     <div class="type-label"><?php echo $res['type']; ?></div>
+                                    <?php if ($res['status'] === 'running'): ?>
+                                        <div class="vm-metrics">
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">🖥️</span>
+                                                <div class="progress cpu-progress" style="width: <?php echo $res['cpu_usage']; ?>%;"></div>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">🧪</span>
+                                                <div class="progress ram-progress" style="width: <?php echo ($res['memory_total'] > 0 ? ($res['memory_used'] / $res['memory_total'] * 100) : 0); ?>%;"></div>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <span class="metric-icon">💾</span>
+                                                <div class="progress disk-progress" style="width: <?php echo ($res['disk_total'] > 0 ? ($res['disk_used'] / $res['disk_total'] * 100) : 0); ?>%;"></div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="vm-card-sidebar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>

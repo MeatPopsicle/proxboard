@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Replace Start/Restart button with animation
-    function replaceButton(card, newStatus) {
+    function replaceButton(card, newStatus, statusData) {
         const currentBtn = card.querySelector('.start-btn, .restart-btn');
         if (!currentBtn) return;
 
@@ -52,9 +52,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 newShutdownBtn.addEventListener('click', () => handleAction(card, newShutdownBtn, 'shutdown'));
             }
 
+            // Update progress bars
+            const metricsDiv = card.querySelector('.vm-metrics');
+            if (metricsDiv) {
+                if (isRunning) {
+                    metricsDiv.style.display = 'flex';
+                    updateProgressBars(card, statusData);
+                } else {
+                    metricsDiv.remove();
+                }
+            } else if (isRunning) {
+                const typeLabel = card.querySelector('.type-label');
+                const newMetricsDiv = document.createElement('div');
+                newMetricsDiv.className = 'vm-metrics';
+                newMetricsDiv.innerHTML = `
+                    <div class="progress-bar"><span class="metric-icon">🖥️</span><div class="progress cpu-progress" style="width: ${statusData.cpu_usage}%"></div></div>
+                    <div class="progress-bar"><span class="metric-icon">🧪</span><div class="progress ram-progress" style="width: ${statusData.memory_total > 0 ? (statusData.memory_used / statusData.memory_total * 100) : 0}%"></div></div>
+                    <div class="progress-bar"><span class="metric-icon">💾</span><div class="progress disk-progress" style="width: ${statusData.disk_total > 0 ? (statusData.disk_used / statusData.disk_total * 100) : 0}%"></div></div>
+                `;
+                typeLabel.parentNode.insertBefore(newMetricsDiv, typeLabel.nextSibling);
+                updateProgressBars(card, statusData);
+            }
+
             // Attach event listener to new button
             newBtn.addEventListener('click', () => handleAction(card, newBtn, isRunning ? 'restart' : 'start'));
         }, 300);
+    }
+
+    // Update progress bars for a VM card
+    function updateProgressBars(card, statusData) {
+        const cpuProgress = card.querySelector('.cpu-progress');
+        const ramProgress = card.querySelector('.ram-progress');
+        const diskProgress = card.querySelector('.disk-progress');
+        if (cpuProgress) cpuProgress.style.width = `${statusData.cpu_usage}%`;
+        if (ramProgress) ramProgress.style.width = `${statusData.memory_total > 0 ? (statusData.memory_used / statusData.memory_total * 100) : 0}%`;
+        if (diskProgress) diskProgress.style.width = `${statusData.disk_total > 0 ? (statusData.disk_used / statusData.disk_total * 100) : 0}%`;
+    }
+
+    // Update node status
+    function updateNodeStatus(data) {
+        if (data.node_status) {
+            document.getElementById('cpu-usage').textContent = `${data.node_status.cpu_usage}%`;
+            document.getElementById('ram-usage').textContent = `${data.node_status.memory_used} / ${data.node_status.memory_total} GB`;
+            document.getElementById('disk-usage').textContent = `${data.node_status.disk_used} / ${data.node_status.disk_total} GB`;
+            const cpuProgress = document.querySelector('.node-metrics .cpu-progress');
+            const ramProgress = document.querySelector('.node-metrics .ram-progress');
+            const diskProgress = document.querySelector('.node-metrics .disk-progress');
+            if (cpuProgress) cpuProgress.style.width = `${data.node_status.cpu_usage}%`;
+            if (ramProgress) ramProgress.style.width = `${data.node_status.memory_total > 0 ? (data.node_status.memory_used / data.node_status.memory_total * 100) : 0}%`;
+            if (diskProgress) diskProgress.style.width = `${data.node_status.disk_total > 0 ? (data.node_status.disk_used / data.node_status.disk_total * 100) : 0}%`;
+        }
     }
 
     // Handle Start/Stop/Shutdown/Restart actions
@@ -77,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const newStatus = (action === 'start' || action === 'restart') ? 'running' : 'stopped';
                     indicator.className = `status-indicator status-${newStatus}`;
                     if (action === 'start' || action === 'stop' || action === 'shutdown') {
-                        replaceButton(card, newStatus);
+                        replaceButton(card, newStatus, {});
                     }
                 } else {
                     console.error(`${action} failed:`, data.error);
@@ -205,13 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (card) {
                             const indicator = card.querySelector('.status-indicator');
                             const currentStatus = indicator.classList.contains('status-running') ? 'running' : 'stopped';
-                            const newStatus = data.statuses[vmid];
+                            const newStatus = data.statuses[vmid].status;
                             if (currentStatus !== newStatus) {
                                 indicator.className = `status-indicator status-${newStatus}`;
-                                replaceButton(card, newStatus);
+                                replaceButton(card, newStatus, data.statuses[vmid]);
+                            } else if (newStatus === 'running') {
+                                updateProgressBars(card, data.statuses[vmid]);
                             }
                         }
                     });
+                    updateNodeStatus(data);
                 }
             })
             .catch(err => console.error('Status refresh failed:', err.message));

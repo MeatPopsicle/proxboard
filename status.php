@@ -26,6 +26,7 @@ if (isset($auth['error'])) {
 
 $qemu_vms = getQemuVMs($config['proxmox_host'], $config['node'], $auth['ticket']);
 $lxc_containers = getLxcContainers($config['proxmox_host'], $config['node'], $auth['ticket']);
+$node_status = getNodeStatus($config['proxmox_host'], $config['node'], $auth['ticket']);
 
 if (isset($qemu_vms['error']) || isset($lxc_containers['error'])) {
     echo json_encode(['error' => $qemu_vms['error'] ?? $lxc_containers['error']]);
@@ -47,7 +48,19 @@ foreach ($lxc_containers as $container) {
     }
 }
 
-echo json_encode(['success' => true, 'statuses' => $statuses]);
+$response = ['success' => true, 'statuses' => $statuses];
+
+if (!isset($node_status['error'])) {
+    $response['node_status'] = [
+        'cpu_usage' => round($node_status['cpu'] * 100, 2),
+        'memory_used' => round($node_status['memory']['used'] / (1024 * 1024 * 1024), 2),
+        'memory_total' => round($node_status['memory']['total'] / (1024 * 1024 * 1024), 2),
+        'disk_used' => round($node_status['rootfs']['used'] / (1024 * 1024 * 1024), 2),
+        'disk_total' => round($node_status['rootfs']['total'] / (1024 * 1024 * 1024), 2)
+    ];
+}
+
+echo json_encode($response);
 ob_end_flush();
 exit;
 ?>

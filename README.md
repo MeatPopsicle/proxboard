@@ -28,15 +28,15 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 - Move config.php safely out of public reach into _/etc/proxmox-dashboard/config.php_ and edit it with your Proxmox IP, credentials and node name.
 
-- You can then access the dashboard by navigating to `http://your-server-ip/proxboard/dashboard.php`.
+- Ensure www-data (or relevant web user) has write access to the pinned.json and debug.log files
+  - _sudo chmod 664 /var/www/html/proxboard/pinned.json debug.log_
+  - _sudo chown www-data:www-data /var/www/html/proxboard/pinned.json debug.log_  
+
+- In Proxmox, add at the top of your node notes: IP: x.x.x.x Port: xx SSHPort: xx' ('sshport' is optional in case custom, otherwise defaults to 22, port defaults to 80).
+
+- You may then access the dashboard by navigating to http://your-server-ip/proxboard/dashboard.php.  
 
 ## Troubleshooting
-
-Ensure www-data (or relevant web user) has write access to the pinned.json and debug.log files
-
-E.G:
-- _sudo chmod 664 /var/www/html/proxboard/pinned.json debug.log_
-- _sudo chown www-data:www-data /var/www/html/proxboard/pinned.json debug.log_
 
 Check debug.log if any critical errors occur
 

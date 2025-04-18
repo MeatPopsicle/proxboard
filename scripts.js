@@ -195,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             // Insert into pinnedGrid in vmid order
                             const pinnedCards = Array.from(pinnedGrid.querySelectorAll('.vm-card'));
+                            // Remove placeholder text if present
+                            const placeholder = pinnedGrid.querySelector('p');
+                            if (placeholder) placeholder.remove();
                             let inserted = false;
                             for (const otherCard of pinnedCards) {
                                 const otherVmid = parseInt(otherCard.dataset.vmid);

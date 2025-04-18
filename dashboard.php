@@ -41,10 +41,11 @@
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
                                     <?php if ($res['status'] === 'running'): ?>
                                         <button class="action-btn restart-btn" title="Restart">🔄</button>
+                                        <button class="action-btn shutdown-btn" title="Shutdown">⏻</button>
                                     <?php else: ?>
                                         <button class="action-btn start-btn" title="Start">▶</button>
                                     <?php endif; ?>
-                                    <button class="action-btn stop-btn" title="Stop">■</button>
+                                    <button class="action-btn stop-btn" title="Force Stop">■</button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -78,10 +79,11 @@
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
                                     <?php if ($res['status'] === 'running'): ?>
                                         <button class="action-btn restart-btn" title="Restart">🔄</button>
+                                        <button class="action-btn shutdown-btn" title="Shutdown">⏻</button>
                                     <?php else: ?>
                                         <button class="action-btn start-btn" title="Start">▶</button>
                                     <?php endif; ?>
-                                    <button class="action-btn stop-btn" title="Stop">■</button>
+                                    <button class="action-btn stop-btn" title="Force Stop">■</button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -91,7 +93,7 @@
         <?php } ?>
     </div>
 
-    <!-- Modal for Stop/Restart Confirmation -->
+    <!-- Modal for Stop/Shutdown/Restart Confirmation -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
             <p>Are you sure you want to <span id="modalAction"></span> this container?</p>

@@ -34,12 +34,30 @@ document.addEventListener('DOMContentLoaded', () => {
             newBtn.classList.add('fade-in', 'bounce');
             setTimeout(() => newBtn.classList.remove('fade-in', 'bounce'), 300);
 
-            // Attach event listener
+            // Update shutdown button visibility
+            const shutdownBtn = card.querySelector('.shutdown-btn');
+            if (shutdownBtn) {
+                if (isRunning) {
+                    shutdownBtn.style.display = 'flex';
+                } else {
+                    shutdownBtn.remove();
+                }
+            } else if (isRunning) {
+                const stopBtn = card.querySelector('.stop-btn');
+                const newShutdownBtn = document.createElement('button');
+                newShutdownBtn.className = 'action-btn shutdown-btn';
+                newShutdownBtn.title = 'Shutdown';
+                newShutdownBtn.textContent = '⏻';
+                stopBtn.parentNode.insertBefore(newShutdownBtn, stopBtn);
+                newShutdownBtn.addEventListener('click', () => handleAction(card, newShutdownBtn, 'shutdown'));
+            }
+
+            // Attach event listener to new button
             newBtn.addEventListener('click', () => handleAction(card, newBtn, isRunning ? 'restart' : 'start'));
         }, 300);
     }
 
-    // Handle Start/Stop/Restart actions
+    // Handle Start/Stop/Shutdown/Restart actions
     function handleAction(card, btn, action) {
         const vmid = card.dataset.vmid;
         const type = card.dataset.type.toLowerCase();
@@ -56,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(data => {
                 if (data.success) {
                     const indicator = card.querySelector('.status-indicator');
-                    const newStatus = action === 'start' ? 'running' : 'stopped';
+                    const newStatus = (action === 'start' || action === 'restart') ? 'running' : 'stopped';
                     indicator.className = `status-indicator status-${newStatus}`;
-                    if (action === 'start' || action === 'stop') {
+                    if (action === 'start' || action === 'stop' || action === 'shutdown') {
                         replaceButton(card, newStatus);
                     }
                 } else {
@@ -69,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        if ((action === 'stop' || action === 'restart') && isRunning) {
+        if ((action === 'stop' || action === 'shutdown' || action === 'restart') && isRunning) {
             showConfirmModal(action, executeAction);
         } else {
             executeAction();
@@ -162,12 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Start/Stop/Restart logic
-    document.querySelectorAll('.start-btn, .stop-btn, .restart-btn').forEach(btn => {
+    // Start/Stop/Shutdown/Restart logic
+    document.querySelectorAll('.start-btn, .stop-btn, .shutdown-btn, .restart-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const card = btn.closest('.vm-card');
             const action = btn.classList.contains('start-btn') ? 'start' : 
-                          btn.classList.contains('stop-btn') ? 'stop' : 'restart';
+                          btn.classList.contains('stop-btn') ? 'stop' : 
+                          btn.classList.contains('shutdown-btn') ? 'shutdown' : 'restart';
             handleAction(card, btn, action);
         });
     });

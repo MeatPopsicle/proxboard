@@ -10,7 +10,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 - Action bar to easily manage / access the node:
 
-    - Start / Stop / Restart (confirmation if running)
+    - Start / Restart / Shutdown / Stop (confirmation if running)
 
     - Connect to web address, or SSH
 
@@ -20,7 +20,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
 
 # Installation
 
-- Place this into a directory in your web server node (e.g: /var/www/html/) and make sure it is accessible via HTTP.
+- Place this into a 'proxboard' directory in your web server node (e.g: /var/www/html/proxboard) and make sure it is accessible via HTTP.
 
 - Move config.php safely out of public reach into /etc/proxmox-dashboard/config.php and edit it with your Proxmox IP, credentials and node name.
 

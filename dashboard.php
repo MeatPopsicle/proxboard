@@ -78,7 +78,7 @@
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="vm-card-sidebar">
+                                <div class="vm-card-actionbar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
                                     <?php if ($res['status'] === 'running'): ?>
@@ -132,7 +132,7 @@
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="vm-card-sidebar">
+                                <div class="vm-card-actionbar">
                                     <a href="<?php echo htmlspecialchars($res['web_url']); ?>" target="_blank" class="action-btn" title="Web">🌐</a>
                                     <a href="<?php echo htmlspecialchars($res['ssh_url']); ?>" target="_blank" class="action-btn ssh-btn" title="SSH">🖥️</a>
                                     <?php if ($res['status'] === 'running'): ?>

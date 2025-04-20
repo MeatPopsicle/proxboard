@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('confirmModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsBtn = document.querySelector('.settings-btn');
+    const showNodeMetricsCheckbox = document.getElementById('showNodeMetrics');
+    const showVMMetricsCheckbox = document.getElementById('showVMMetrics');
+    const sortOrderSelect = document.getElementById('sortOrder');
+    const themeSelect = document.getElementById('theme');
+    const settingsSave = document.getElementById('settingsSave');
+    const settingsCancel = document.getElementById('settingsCancel');
     const modalAction = document.getElementById('modalAction');
     const modalConfirm = document.getElementById('modalConfirm');
     const modalCancel = document.getElementById('modalCancel');
@@ -15,6 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
         modalCancel.onclick = () => {
             modal.style.display = 'none';
         };
+    }
+
+    // Update VM metrics for a single card
+    function updateVMMetrics(card, showMetrics, statusData = {}) {
+        const isRunning = card.querySelector('.status-indicator').classList.contains('status-running');
+        let metricsDiv = card.querySelector('.vm-metrics');
+        
+        if (isRunning && showMetrics) {
+            if (!metricsDiv) {
+                const typeLabel = card.querySelector('.type-label');
+                metricsDiv = document.createElement('div');
+                metricsDiv.className = 'vm-metrics';
+                metricsDiv.innerHTML = `
+                    <div class="progress-bar"><span class="metric-icon">🖥️</span><div class="progress cpu-progress" style="width: ${statusData.cpu_usage || 0}%"></div></div>
+                    <div class="progress-bar"><span class="metric-icon">🧪</span><div class="progress ram-progress" style="width: ${statusData.memory_total > 0 ? (statusData.memory_used / statusData.memory_total * 100) : 0}%"></div></div>
+                    <div class="progress-bar"><span class="metric-icon">💾</span><div class="progress disk-progress" style="width: ${statusData.disk_total > 0 ? (statusData.disk_used / statusData.disk_total * 100) : 0}%"></div></div>
+                `;
+                typeLabel.parentNode.insertBefore(metricsDiv, typeLabel.nextSibling);
+            }
+            metricsDiv.classList.remove('hidden');
+            if (statusData.cpu_usage !== undefined) {
+                updateProgressBars(card, statusData);
+            }
+        } else if (metricsDiv) {
+            metricsDiv.classList.add('hidden');
+        }
+        console.log(`updateVMMetrics: vmid=${card.dataset.vmid}, isRunning=${isRunning}, showMetrics=${showMetrics}, hasMetricsDiv=${!!metricsDiv}`);
     }
 
     // Replace Start/Restart button with animation
@@ -52,27 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 newShutdownBtn.addEventListener('click', () => handleAction(card, newShutdownBtn, 'shutdown'));
             }
 
-            // Update progress bars
-            const metricsDiv = card.querySelector('.vm-metrics');
-            if (metricsDiv) {
-                if (isRunning) {
-                    metricsDiv.style.display = 'flex';
-                    updateProgressBars(card, statusData);
-                } else {
-                    metricsDiv.remove();
-                }
-            } else if (isRunning) {
-                const typeLabel = card.querySelector('.type-label');
-                const newMetricsDiv = document.createElement('div');
-                newMetricsDiv.className = 'vm-metrics';
-                newMetricsDiv.innerHTML = `
-                    <div class="progress-bar"><span class="metric-icon">🖥️</span><div class="progress cpu-progress" style="width: ${statusData.cpu_usage}%"></div></div>
-                    <div class="progress-bar"><span class="metric-icon">🧪</span><div class="progress ram-progress" style="width: ${statusData.memory_total > 0 ? (statusData.memory_used / statusData.memory_total * 100) : 0}%"></div></div>
-                    <div class="progress-bar"><span class="metric-icon">💾</span><div class="progress disk-progress" style="width: ${statusData.disk_total > 0 ? (statusData.disk_used / statusData.disk_total * 100) : 0}%"></div></div>
-                `;
-                typeLabel.parentNode.insertBefore(newMetricsDiv, typeLabel.nextSibling);
-                updateProgressBars(card, statusData);
-            }
+            // Update metrics visibility
+            updateVMMetrics(card, showVMMetricsCheckbox.checked, statusData);
 
             // Attach event listener to new button
             newBtn.addEventListener('click', () => handleAction(card, newBtn, isRunning ? 'restart' : 'start'));
@@ -103,6 +119,149 @@ document.addEventListener('DOMContentLoaded', () => {
             if (diskProgress) diskProgress.style.width = `${data.node_status.disk_total > 0 ? (data.node_status.disk_used / data.node_status.disk_total * 100) : 0}%`;
         }
     }
+
+    // Settings Modal Logic
+    function showSettingsModal() {
+        settingsModal.style.display = 'flex';
+    }
+
+    function saveSettings() {
+        const settings = {
+            showNodeMetrics: showNodeMetricsCheckbox.checked,
+            showVMMetrics: showVMMetricsCheckbox.checked,
+            sortOrder: sortOrderSelect.value,
+            theme: themeSelect.value
+        };
+
+        fetch('/proxboard/save_settings.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `settings=${encodeURIComponent(JSON.stringify(settings))}`
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Apply node metrics visibility
+                  document.querySelectorAll('.node-metrics').forEach(el => {
+                      el.classList.toggle('hidden', !settings.showNodeMetrics);
+                  });
+
+                  // Apply VM metrics visibility dynamically
+                  document.querySelectorAll('.vm-card').forEach(card => {
+                      updateVMMetrics(card, settings.showVMMetrics);
+                  });
+
+                  // Trigger immediate status refresh if VM metrics are enabled
+                  if (settings.showVMMetrics) {
+                      fetch('/proxboard/status.php')
+                          .then(response => {
+                              if (!response.ok) throw new Error('Network response was not ok');
+                              return response.json();
+                          })
+                          .then(data => {
+                              if (data.success) {
+                                  Object.keys(data.statuses).forEach(vmid => {
+                                      const card = document.querySelector(`.vm-card[data-vmid="${vmid}"]`);
+                                      if (card) {
+                                          const indicator = card.querySelector('.status-indicator');
+                                          const currentStatus = indicator.classList.contains('status-running') ? 'running' : 'stopped';
+                                          const newStatus = data.statuses[vmid].status;
+                                          if (currentStatus !== newStatus) {
+                                              indicator.className = `status-indicator status-${newStatus}`;
+                                              replaceButton(card, newStatus, data.statuses[vmid]);
+                                          } else if (newStatus === 'running' && settings.showVMMetrics) {
+                                              updateVMMetrics(card, settings.showVMMetrics, data.statuses[vmid]);
+                                          }
+                                      }
+                                  });
+                                  updateNodeStatus(data);
+                                  console.log('Immediate status refresh completed');
+                              }
+                          })
+                          .catch(err => console.error('Immediate status refresh failed:', err.message));
+                  }
+
+                  // Apply sorting dynamically
+                  ['pinned-grid', 'unpinned-grid'].forEach(gridId => {
+                      const grid = document.getElementById(gridId);
+                      const cards = Array.from(grid.querySelectorAll('.vm-card'));
+                      cards.sort((a, b) => {
+                          const vmidA = parseInt(a.dataset.vmid);
+                          const vmidB = parseInt(b.dataset.vmid);
+                          return settings.sortOrder === 'asc' ? vmidA - vmidB : vmidB - vmidA;
+                      });
+                      grid.innerHTML = '';
+                      if (cards.length === 0) {
+                          grid.innerHTML = '<p>No resources found.</p>';
+                      } else {
+                          cards.forEach(card => grid.appendChild(card));
+                      }
+                  });
+
+                  // Apply theme dynamically
+                  document.body.className = settings.theme + '-theme';
+
+                  console.log('Settings saved:', settings);
+                  settingsModal.style.display = 'none';
+              } else {
+                  console.error('Settings save failed:', data.error);
+              }
+          })
+          .catch(err => console.error('Settings save failed:', err.message));
+    }
+
+    settingsBtn.addEventListener('click', showSettingsModal);
+    settingsSave.addEventListener('click', saveSettings);
+    settingsCancel.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+    });
+
+    // Apply initial settings with cache-busting
+    fetch(`/proxboard/settings.json?t=${new Date().getTime()}`)
+        .then(response => response.json())
+        .then(data => {
+            const defaults = { showNodeMetrics: true, showVMMetrics: true, sortOrder: 'asc', theme: 'dark' };
+            const settings = { ...defaults, ...data };
+            // Theme is applied server-side, so only update UI elements
+            document.querySelectorAll('.node-metrics').forEach(el => {
+                el.classList.toggle('hidden', !settings.showNodeMetrics);
+            });
+            document.querySelectorAll('.vm-card').forEach(card => {
+                updateVMMetrics(card, settings.showVMMetrics);
+            });
+            showNodeMetricsCheckbox.checked = settings.showNodeMetrics;
+            showVMMetricsCheckbox.checked = settings.showVMMetrics;
+            sortOrderSelect.value = settings.sortOrder;
+            themeSelect.value = settings.theme;
+
+            // Apply initial sorting (should match server-side)
+            ['pinned-grid', 'unpinned-grid'].forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                const cards = Array.from(grid.querySelectorAll('.vm-card'));
+                cards.sort((a, b) => {
+                    const vmidA = parseInt(a.dataset.vmid);
+                    const vmidB = parseInt(b.dataset.vmid);
+                    return settings.sortOrder === 'asc' ? vmidA - vmidB : vmidB - vmidA;
+                });
+                grid.innerHTML = '';
+                if (cards.length === 0) {
+                    grid.innerHTML = '<p>No resources found.</p>';
+                } else {
+                    cards.forEach(card => grid.appendChild(card));
+                }
+            });
+
+            console.log('Initial settings applied:', settings);
+        })
+        .catch(() => {
+            // Apply defaults if settings.json doesn't exist
+            document.querySelectorAll('.node-metrics').forEach(el => {
+                el.classList.toggle('hidden', false);
+            });
+            document.querySelectorAll('.vm-card').forEach(card => {
+                updateVMMetrics(card, true);
+            });
+            console.log('Settings.json not found, applied defaults');
+        });
 
     // Handle Start/Stop/Shutdown/Restart actions
     function handleAction(card, btn, action) {
@@ -259,8 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (currentStatus !== newStatus) {
                                 indicator.className = `status-indicator status-${newStatus}`;
                                 replaceButton(card, newStatus, data.statuses[vmid]);
-                            } else if (newStatus === 'running') {
-                                updateProgressBars(card, data.statuses[vmid]);
+                            } else if (newStatus === 'running' && showVMMetricsCheckbox.checked) {
+                                updateVMMetrics(card, showVMMetricsCheckbox.checked, data.statuses[vmid]);
                             }
                         }
                     });

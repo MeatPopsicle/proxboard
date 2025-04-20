@@ -1,6 +1,6 @@
 # Changelog
 
-### Commit
+### Commit f44f5ab
 - v1.2.0  feat: light / dark mode
 - v1.1.0  feat: user settings to customise the display
 

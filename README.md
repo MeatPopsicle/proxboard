@@ -13,6 +13,7 @@ A simple dashboard that auto-populates your VMs and LXC containers from your Pro
     - Connect to web address, or SSH
         - Edit your Proxmox LXC/VM note as follows:
         - IP: x.x.x.x Port: xxxx (SSHPort: xxxx - optional)
+
 - Settings Menu for your preferences
   - Light / Dark mode
 

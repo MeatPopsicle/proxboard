@@ -7,17 +7,28 @@
     <link rel="stylesheet" href="/proxboard/styles.css">
     <link rel="icon" type="image/x-icon" href="/proxboard/favicon.png">
 </head>
-<body>
+<body class="<?php
+    $default_settings = ['showNodeMetrics' => true, 'showVMMetrics' => true, 'sortOrder' => 'asc', 'theme' => 'dark'];
+    $loaded_settings = json_decode(file_get_contents(__DIR__ . '/settings.json'), true) ?? [];
+    $settings = array_merge($default_settings, $loaded_settings);
+    echo htmlspecialchars($settings['theme']) . '-theme';
+?>">
     <div class="container">
         <?php
         $data = require_once __DIR__ . '/logic.php';
         if ($data['error']) {
             echo "<p class='error'>" . htmlspecialchars($data['error']) . "</p>";
         } else {
+            // Sort resources server-side based on sortOrder
+            $sort_function = function($a, $b) use ($settings) {
+                return $settings['sortOrder'] === 'asc' ? $a['vmid'] <=> $b['vmid'] : $b['vmid'] <=> $a['vmid'];
+            };
+            usort($data['pinned_resources'], $sort_function);
+            usort($data['unpinned_resources'], $sort_function);
         ?>
             <div class="node-status-bar">
                 <h2>Node: <?php echo htmlspecialchars($data['node_status']['node_name'] ?? 'Unknown'); ?></h2>
-                <div class="node-metrics">
+                <div class="node-metrics <?php echo !$settings['showNodeMetrics'] ? 'hidden' : ''; ?>">
                     <span>
                         <span class="metric-label">CPU</span>
                         <span id="cpu-usage"><?php echo htmlspecialchars($data['node_status']['cpu_usage'] ?? 'N/A'); ?>%</span>
@@ -40,6 +51,9 @@
                         </div>
                     </span>
                 </div>
+                <span class="settings-right">
+                    <button class="settings-btn" title="Settings">⚙️</button>
+                </span>
             </div>
             <div class="pinned-section">
                 <h2>Pinned Servers</h2>
@@ -61,7 +75,7 @@
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                                     <div class="type-label"><?php echo $res['type'] . ' (' . $res['vmid'] . ')'; ?></div>
-                                    <?php if ($res['status'] === 'running'): ?>
+                                    <?php if ($res['status'] === 'running' && $settings['showVMMetrics']): ?>
                                         <div class="vm-metrics">
                                             <div class="progress-bar">
                                                 <span class="metric-icon">🖥️</span>
@@ -115,7 +129,7 @@
                                     </div>
                                     <p><?php echo htmlspecialchars($res['ip'] . ':' . $res['web_port']); ?></p>
                                     <div class="type-label"><?php echo $res['type'] . ' (' . $res['vmid'] . ')'; ?></div>
-                                    <?php if ($res['status'] === 'running'): ?>
+                                    <?php if ($res['status'] === 'running' && $settings['showVMMetrics']): ?>
                                         <div class="vm-metrics">
                                             <div class="progress-bar">
                                                 <span class="metric-icon">🖥️</span>
@@ -157,6 +171,37 @@
             <p>Are you sure you want to <span id="modalAction"></span> this container?</p>
             <button class="modal-confirm" id="modalConfirm">Confirm</button>
             <button class="modal-cancel" id="modalCancel">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>Settings</h3>
+            <label>
+                <input type="checkbox" id="showNodeMetrics" <?php echo $settings['showNodeMetrics'] ? 'checked' : ''; ?>>
+                Show Node Metrics in Header
+            </label>
+            <label>
+                <input type="checkbox" id="showVMMetrics" <?php echo $settings['showVMMetrics'] ? 'checked' : ''; ?>>
+                Show Metrics on VM Cards
+            </label>
+            <label>
+                Sort Order:
+                <select id="sortOrder">
+                    <option value="asc" <?php echo $settings['sortOrder'] === 'asc' ? 'selected' : ''; ?>>VMID Ascending</option>
+                    <option value="desc" <?php echo $settings['sortOrder'] === 'desc' ? 'selected' : ''; ?>>VMID Descending</option>
+                </select>
+            </label>
+            <label>
+                Theme:
+                <select id="theme">
+                    <option value="dark" <?php echo $settings['theme'] === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                    <option value="light" <?php echo $settings['theme'] === 'dark' ? 'selected' : ''; ?>>Light</option>
+                </select>
+            </label>
+            <button class="modal-save" id="settingsSave">Save</button>
+            <button class="modal-cancel" id="settingsCancel">Cancel</button>
         </div>
     </div>
 

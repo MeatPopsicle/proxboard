@@ -1,25 +1,54 @@
 body {
-    background-color: #2d2d2d;
-    color: #ffffff;
+    background-color: var(--bg-color, #2d2d2d);
+    color: var(--text-color, #ffffff);
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
 }
 
+.light-theme {
+    --bg-color: #f0f0f0;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --progress-bg: #cccccc;
+    --border-color: #dddddd;
+}
+
+.light-theme .node-status-bar,
+.light-theme .vm-card,
+.light-theme .modal-content {
+    background-color: var(--card-bg);
+}
+
+.light-theme, .light-theme h2, .light-theme .pin-btn {
+    color: var(--text-color);
+}
+
+.light-theme .vm-card:hover {
+    background-color: #e0e0e0;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    margin-top: 40px;
 }
 
 .node-status-bar {
-    background-color: #3a3a3a;
-    padding: 12px;
+    background-color: var(--card-bg, #3a3a3a);
+    padding: 8px 12px;
     border-radius: 5px;
-    margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
 }
 
 .node-status-bar h2 {
@@ -38,6 +67,18 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.settings-right {
+    float: right;
+}
+
+.settings-btn {
+    background: none;
+    border: none;
+    color: var(--text-color, #ffffff);
+    cursor: pointer;
+    font-size: 18px;
 }
 
 .metric-label::before {
@@ -64,7 +105,7 @@ body {
 
 .node-progress-bar {
     background-color: #555555;
-    width: 100px;
+    width: 80px;
     height: 4px;
     border-radius: 2px;
     overflow: hidden;
@@ -78,13 +119,14 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 12px;
+    margin-top: 20px;
 }
 
 .vm-card {
-    background-color: #3a3a3a;
+    background-color: var(--card-bg, #3a3a3a);
     padding: 12px;
     border-radius: 5px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -201,7 +243,7 @@ body {
 }
 
 h2 {
-    color: #ffffff;
+    color: var(--text-color, #ffffff);
     border-bottom: 1px solid #4da8da;
     padding-bottom: 4px;
     font-size: 18px;
@@ -210,6 +252,14 @@ h2 {
 .type-label {
     font-size: 11px;
     color: #aaaaaa;
+}
+
+.hidden {
+    display: none;
+}
+
+.vm-metrics.hidden {
+    display: none !important;
 }
 
 .error {
@@ -263,6 +313,7 @@ h2 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -270,9 +321,10 @@ h2 {
 }
 
 .modal-content {
-    background-color: #3a3a3a;
+    background-color: var(--card-bg, #3a3a3a);
     padding: 20px;
     border-radius: 5px;
+    min-width: 300px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
@@ -281,13 +333,28 @@ h2 {
     margin: 0 0 20px;
 }
 
+.modal-content label {
+    display: block;
+    margin: 10px 0;
+    text-align: left;
+    color: var(--text-color, #ffffff);
+}
+
+.modal-content select, .modal-content input {
+    margin-left: 10px;
+    background-color: #555555;
+    color: #ffffff;
+    border: none;
+    padding: 4px;
+    border-radius: 3px;
+}
+
 .modal-content button {
     padding: 8px 16px;
     margin: 0 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .modal-confirm {
@@ -297,6 +364,15 @@ h2 {
 
 .modal-confirm:hover {
     background-color: #e60000;
+}
+
+.modal-save {
+    background-color: #00cc00;
+    color: #ffffff;
+}
+
+.modal-save:hover {
+    background-color: #00e600;
 }
 
 .modal-cancel {

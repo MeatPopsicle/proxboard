@@ -1,5 +1,9 @@
 # Changelog
 
+### Commit
+- v1.2.0  feat: light / dark mode
+- v1.1.0  feat: user settings to customise the display
+
 ### Commit 3dc6716
 - v1.0.1  fix: placeholder text now disappears when first item is pinned
 
